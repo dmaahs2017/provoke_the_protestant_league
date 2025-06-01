@@ -1,0 +1,79 @@
+country_decisions = {
+	provoke_league_war = {
+		major = yes
+		potential = {
+			# Decision is only available for the Catholic Emperor once the religious leages have started
+			country_religion = catholic
+			hre_religion_locked = no
+			hre_leagues_enabled = yes
+			is_emperor = yes
+			is_league_leader = yes
+
+			# Hide this decision once it has been clicked
+			NOT = { has_global_flag = provoked_league_war }
+		}
+		allow = {
+			is_emperor = yes
+			is_league_leader = yes
+			country_religion = catholic
+
+			# Untested, don't allow if we have a truce with the protestant league leader
+			# NOT = {
+			# 	any_country = {
+			# 		is_league_leader = yes
+			# 		NOT = { tag = ROOT }
+			# 		truce_with = ROOT
+			# 	}
+			# }
+		}
+		effect = {
+			# Every country in the HRE that has not joined a league is provoked by the emperor to join the protestant side and imediately declare war.
+			set_global_flag = provoked_league_war
+			# HRE nations not in a league join the protestant side
+			every_country = {
+				limit = {
+					NOT = { 
+						OR = {
+							in_league = catholic
+							in_league = protestant
+						}
+					}
+					is_part_of_hre = yes
+					NOT = { tag = ROOT }
+				}
+				join_league = protestant
+			}
+
+			# Protestant leage leader declares the religious leage war
+			every_country = {
+				limit = {
+					is_league_leader = yes
+					NOT = { tag = ROOT }
+				}
+				declare_war_with_cb = {
+					casus_belli = cb_religious_league
+					who = ROOT
+				}
+			}
+
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	# This is just a decision which enables the religious leages for easier testing
+	# testing_enable_leagues = {
+	# 	major = yes
+	# 	potential = {
+	# 		ai = no
+	# 	}
+	# 	allow = {
+	# 		ai = no
+	# 	}
+	# 	effect = {
+	# 		enable_hre_leagues = yes
+	# 	}
+	# }
+
+}	
